@@ -38,7 +38,12 @@ data = Dataset.load_from_df(smallerratings[['user_id', 'book_id', 'rating']], re
 # splitting the data set so that 20% of it is a test set, whilst the rest of the data is the training set 
 trainset, testset = train_test_split(data, test_size=0.2, random_state=0)
 # creating an SVD object for the algorithm
+svd = SVD()
 
+
+
+#fit and test algorithm
+predictions = svd.fit(trainset).test(testset)
 
 
 
@@ -49,7 +54,7 @@ trainset, testset = train_test_split(data, test_size=0.2, random_state=0)
 @app.route('/')
 @app.route('/home')
 def index():
-    closeness_of_fit = '12345'
+    closeness_of_fit = accuracy.rmse(predictions)
     return render_template('index.html', variable = closeness_of_fit )   
 
 @app.route('/next')
