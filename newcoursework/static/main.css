@@ -1,0 +1,14 @@
+body {
+    margin: 0;
+    font-family: sans-serif;
+    color: coral;
+}
+
+ul {
+    list-style-type: square;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: rgb(35, 93, 107);
+    display: inline-block;
+}
