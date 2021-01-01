@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block head %}<title>Home</title>{% endblock %}
+
+{% block body %}
+<div id="homepage-navbar" class = navbar>
+    <ul>
+        <li><a href = "{{url_for('next')}}">Next</a></li>
+        <li><a href="{{url_for('discover')}}">Discover</a></li>
+    </ul>
+</div>
+<div>
+    <p>This is the {{closeness_of_fit}}</p>
+</div>
+{% endblock %}
