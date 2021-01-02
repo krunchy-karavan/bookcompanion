@@ -31,7 +31,7 @@ reader = Reader(rating_scale=(1, 5))
 # load dataframe into correct format for surprise library
 data = Dataset.load_from_df(smallerratings[['user_id', 'book_id', 'rating']], reader)
 # splitting the data set so that 20% of it is a test set, whilst the rest of the data is the training set 
-trainset, testset = train_test_split(data, test_size=0.2, random_state=0)
+trainset, testset = train_test_split(data, test_size = 0.2, random_state=0)
 # creating an SVD object for the algorithm
 svd = SVD()
 
@@ -152,7 +152,7 @@ def makepredictions(ratings,smallerratings,smallerbooks,newfile):
         num_rec-= 1
         if num_rec == 0:
             break
-    print(recommended_titles_list)
+    return recommended_titles_list
     
 newfile = createbestalgorithm(data)
 makepredictions(ratings,smallerratings,smallerbooks,newfile)

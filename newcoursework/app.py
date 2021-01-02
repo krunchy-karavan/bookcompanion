@@ -15,7 +15,7 @@ import os
 import random
 from collections import defaultdict
 from time import time
-from recommender import createbestalgorithm
+from recommender import createbestalgorithm,makepredictions
 
 
 app = Flask(__name__)
@@ -40,10 +40,10 @@ trainset, testset = train_test_split(data, test_size=0.2, random_state=0)
 # creating an SVD object for the algorithm
 svd = SVD()
 
-
-
 #fit and test algorithm
 predictions = svd.fit(trainset).test(testset)
+newfile = createbestalgorithm(data)
+
 
 
 
@@ -54,7 +54,7 @@ predictions = svd.fit(trainset).test(testset)
 @app.route('/')
 @app.route('/home')
 def index():
-    closeness_of_fit = accuracy.rmse(predictions)
+    closeness_of_fit = 'hello'
     return render_template('index.html', variable = closeness_of_fit )   
 
 @app.route('/next')
