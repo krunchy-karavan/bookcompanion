@@ -33,15 +33,15 @@ data = Dataset.load_from_df(smallerratings[['user_id', 'book_id', 'rating']], re
 # splitting the data set so that 20% of it is a test set, whilst the rest of the data is the training set 
 trainset, testset = train_test_split(data, test_size = 0.2, random_state=0)
 # creating an SVD object for the algorithm
-svd = SVD()
+#svd = SVD()
 
 
 
 #fit and test algorithm
-predictions = svd.fit(trainset).test(testset)
+#predictions = svd.fit(trainset).test(testset)
 # measuring how accurate  predictions is
-closeness_of_fit = accuracy.rmse(predictions)
-print(closeness_of_fit)
+#closeness_of_fit = accuracy.rmse(predictions)
+#print(closeness_of_fit)
 
 def createbestalgorithm(data): 
     # creating a new validation set to help fine-tune the parameters of the 
@@ -89,8 +89,30 @@ def createbestalgorithm(data):
     # load saved model
     return newfile
 
+
+num_ratings = int(input("How many ratings would you like to make it"))
+
+def makepredictions_generate_rating_books(num_ratings, smallerbooks):
+    # create an array of books for the user to rate
+    random_book_list = []
+    # iterates through to create an intiial list of books to rate
+    while num_ratings > 0:
+        random_book = smallerbooks.sample(1, random_state = None)
+        # gets the title and author of each book
+        random_book_details = random_book[['title','authors']].values
+        random_book_list.append(random_book_details)
+        num_ratings -= 1
+    return random_book_list
+
+def create_predictions(ratings,smallerratings,smallerbooks,newfile,dictionary):
+    new_user_id = ratings.user_id.nunique()+1
+    ratingslist = []
+    for key in dictionary:
+        user_rating = { 'user_id':new_user_id}
+
+
+
 def makepredictions(ratings,smallerratings,smallerbooks,newfile):
-    # creates a new user id so that the user's rating can be added to the test data to make a prediction
     new_user_id = ratings.user_id.nunique()+1
     # an array to store all the ratings the user makes
     ratingslist = []
@@ -109,7 +131,7 @@ def makepredictions(ratings,smallerratings,smallerbooks,newfile):
         # validates if the input is between 1-5
         elif 49 <= ord(user_rating) <= 53:
             # creates a dictionary so that the book rating is in the same format as all the testset ratings
-            random_book_rating = {'user_id':new_user_id, 'book_id':smallerbooks['book_id'].values[0], 'rating':user_rating}
+            random_book_rating = {'user_id':new_user_id, 'book_id':random_book['book_id'].values[0], 'rating':user_rating}
             # adds this record to the ratings list array
             ratingslist.append(random_book_rating)
             # this along with the loop ensures that ratingslist has the same no. of ratings as num_ratings
@@ -118,8 +140,10 @@ def makepredictions(ratings,smallerratings,smallerbooks,newfile):
         else:
             print("This is an invalid input")
             user_rating = input('Rate this book from 1-5. If you have not read this book, enter N')
+    return ratingslist
             
-
+def makepredictions_output(newfile,ratingslist,ratings):
+    new_user_id = ratings.user_id.nunique()+1
     # turns the ratinglist into the same format as smallerratings        
     df = pd.DataFrame(ratingslist)
     # adds the user ratings in ratinglist to the smallerratings database to make a new dataset
@@ -146,13 +170,60 @@ def makepredictions(ratings,smallerratings,smallerbooks,newfile):
     recommended_titles_list = []
     #iterates through the loop to output the top n recommendations
     for idx, rec in enumerate(ranked_predictions):
+        # gets the title of each book
         title = books.loc[books['book_id'] == int(rec[0])]['title']
+        # creates a string of Recommendation no. [title] for each book
         recommended_title = 'Recommendation # ', idx+1, ': ', title, '\n'
+        # adds each recommended title to an array
         recommended_titles_list.append(recommended_title)
         num_rec-= 1
         if num_rec == 0:
             break
     return recommended_titles_list
-    
+
 newfile = createbestalgorithm(data)
-makepredictions(ratings,smallerratings,smallerbooks,newfile)
+ratingslist = makepredictions(ratings,smallerratings,smallerbooks,newfile)
+print(ratingslist)
+recommended_title_list = makepredictions_output(newfile,ratingslist,ratings)
+
+
+    
+'''random_book = smallerbooks.sample(5, random_state  = None)
+new_user_id = ratings.user_id.nunique()+1
+book_id_list = random_book['book_id'].values.tolist()
+ratingslist = []
+for i in range(0,3):
+    rating =  {'user_id': new_user_id, 'book_id': book_id_list[i], 'rating': str(i+1)}
+    ratingslist.append(rating)
+df = pd.DataFrame(ratingslist)
+new_smaller_ratings = smallerratings.append(df,ignore_index = True)
+reader = Reader(rating_scale=(1,5))
+# creates a new matrix using the user_id, book_id, and rating from the new_smaller_ratings dataset
+new_data = Dataset.load_from_df(new_smaller_ratings[['user_id', 'book_id', 'rating']],reader)
+_, best_svd = dump.load(newfile)
+# applies it to the dataset
+best_svd.fit(new_data.build_full_trainset())
+
+# creates the predicted ratings for the user for all the books
+predictionlist = []
+for book_id in new_smaller_ratings['book_id'].unique():
+    predictionlist.append((book_id,best_svd.predict(new_user_id, book_id)[3]))
+    # no of recommendations that the user wants
+num_rec = 5
+# ranks the predictions from highest rating to lowest
+ranked_predictions = sorted(predictionlist, key=lambda x:x[1], reverse=True)
+    
+# list of recommended titles that I can return as an array, I'll then be able to output them individually
+# in the html 
+recommended_titles_list = []
+#iterates through the loop to output the top n recommendations
+for idx, rec in enumerate(ranked_predictions):
+    # gets the title of each book
+    title = books.loc[books['book_id'] == int(rec[0])]['title']
+    # creates a string of Recommendation no. [title] for each book
+    recommended_title = 'Recommendation # ', idx+1, ': ', title, '\n'
+    # adds each recommended title to an array
+    recommended_titles_list.append(recommended_title)
+    num_rec-= 1
+    if num_rec == 0:
+        '''
