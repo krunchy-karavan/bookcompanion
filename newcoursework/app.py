@@ -203,8 +203,7 @@ def index():
 
         print(ratingslist)        
         recommended_title_list = makepredictions_output(newfile, ratingslist,ratings)
-            
-        return render_template('result.html', result = result)
+        print(recommended_title_list)
 
         
 
