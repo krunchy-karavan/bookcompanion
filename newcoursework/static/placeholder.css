@@ -1,10 +1,10 @@
 body {
     margin: 10;
     font-family: sans-serif;
-    color: rgb(5, 20, 105);
+    color: rgb(239, 240, 245);
 }
 
-ul {
+.navbar {
     list-style-type: square;
     margin: 0;
     padding: 0;

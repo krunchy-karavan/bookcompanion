@@ -17,6 +17,9 @@ from collections import defaultdict
 from time import time
 from flask_wtf import FlaskForm, Form
 from form import recommender_inputs,Signupform, BaseFormTemplate
+from flask import Flask
+from flask_mysqldb import MySQL
+
 
 
 
@@ -26,6 +29,7 @@ app = Flask(__name__)
 app.static_folder = 'static'
 
 from wtforms import StringField, PasswordField, SubmitField
+
 
 
 
@@ -162,10 +166,7 @@ def index():
     print(ratingbooks)
 
     # returns just the title of each book and stores it in a list
-    '''ratingbooktitlelist = []
-    for i in range(0,len(ratingbooks)):
-        x = ratingbooks[i][0][1]
-        ratingbooktitlelist.append(x)'''
+
     
     ratingbookdict = {}
     for i in range(0, len(ratingbooks)):
@@ -192,8 +193,10 @@ def index():
         # returns a dictionary with the keys being the variable names of the form's fields, and the values being the user input
         # for the fields
         result = request.form.to_dict()
+        # removes unnecessary fields, so that only the keys which are book ids remain
         result.pop('csrf_token')
         result.pop('submit')
+        # a loop to create a dictionary for each book and rating to be able to add to a list
         new_user_id = ratings.user_id.nunique()+1
         i = 0
         ratingslist = []
@@ -201,13 +204,14 @@ def index():
             user_rating = { 'user_id': new_user_id,  'book_id': int(key),'rating':result[key]}
             ratingslist.append(user_rating)
 
-        print(ratingslist)        
-        recommended_title_list = makepredictions_output(newfile, ratingslist,ratings)
-        print(recommended_title_list)
+        # gets the list of rating dictionaries to run the prediction algorithm on using this function
+        # creates the output list, which can be passed onto a html template to be displayed       
+        #recommended_title_list = makepredictions_output(newfile, ratingslist,ratings)
+        #print(recommended_title_list)
 
         
 
-    return render_template('index.html', form = form, variable = ratingbooks)   
+    return render_template('index.html', form = form    , variable = ratingbooks)   
 
 @app.route('/next')
 def next():
@@ -215,6 +219,7 @@ def next():
 @app.route('/discover')
 def discover(): 
     return render_template('discover.html')
+
 
 if __name__ == "__main__":
     app.config['SECRET_KEY'] = '12345'
