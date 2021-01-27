@@ -3,7 +3,6 @@ import pandas as pd
 pd.set_option('display.max_columns', 25)
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 from surprise import Dataset
 from surprise import Reader
 from surprise import SVD
@@ -27,14 +26,23 @@ from flask_mysqldb import MySQL
 
 
 app = Flask(__name__)
-app.static_folder = 'static'
+
+
+# values configured so that the app knows which database to connect to
+
 
 app.config['MYSQL_HOST'] = 'localhost'
+# where the database is hosted
 app.config['MYSQL_USER'] = 'root'
+# the user the database is under
 app.config['MYSQL_PASSWORD'] = 'kunsa3002'
+# the password for access to the database
 app.config['MYSQL_DB'] = 'library'
+# the name of the database
 
 mysql = MySQL(app)
+# creates an instance of the database that the app can call on, so that it can use and pass data into it
+
 
 
 
@@ -223,9 +231,14 @@ def index():
 @app.route('/next')
 def next():
     return render_template('next.html')
+
 @app.route('/discover')
 def discover(): 
-    return render_template('discover.html')
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM books LIMIT 10")
+    fetchdata = cur.fetchall()
+    cur.close()
+    return render_template('discover.html', data= fetchdata)
 
 
 if __name__ == "__main__":
