@@ -16,6 +16,7 @@ import random
 from collections import defaultdict
 from time import time
 from flask_wtf import FlaskForm, Form
+from wtforms import StringField, PasswordField, SubmitField
 from form import recommender_inputs,Signupform, BaseFormTemplate
 from flask import Flask
 from flask_mysqldb import MySQL
@@ -28,7 +29,13 @@ from flask_mysqldb import MySQL
 app = Flask(__name__)
 app.static_folder = 'static'
 
-from wtforms import StringField, PasswordField, SubmitField
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'kunsa3002'
+app.config['MYSQL_DB'] = 'library'
+
+mysql = MySQL(app)
+
 
 
 
