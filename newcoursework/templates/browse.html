@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+<!-- statement that copies the base template created in base.html-->
+
+
+{% block body %}
+<!-- creates an overarching div, which I will use to design the layout using the css-->
+<h1>Titles</h1>
+
+<h2> Tags</h2>
+{{category_names}}
+
+{{form.category.label}}{{form.category}}
+
+  <div class = "flex-container">
+  {% for row in data %}
+  <!-- for every book, creates a div which outputs the book's title, authors and a picture of it-->
+  <div class = "ingrid-display">
+    <figure>
+  <!-- [2] is the position of the image_url in the list for each book-->
+    <img src = "{{row[2]}}">
+    <!-- [0] is the position of the title and [1] corresponds to the author of each book. These 2 lines print both those 
+    out onto the webpage for each book-->
+   <figcaption> {{row[0]}} {{row[1]}}</figcaption> 
+  </div>
+  {% endfor %}
+  </div>
+
+  {
+{% endblock %}

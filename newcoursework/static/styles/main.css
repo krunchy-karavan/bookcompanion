@@ -2,9 +2,21 @@ body {
     margin: 0;
     font-family: sans-serif;
     color: coral;
+
 }
 
-.navbar {
+ .flex-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap ;
+    justify-content: space-around;
+
+
+ }
+
+
+
+ .navbar {
     list-style-type: square;
     margin: 0;
     padding: 0;
@@ -13,12 +25,11 @@ body {
     display: inline-block;
 }
 
-.flex-container {
-        display: grid;
-        
+.ingrid-display{
 
-}
-
-.ingrid-display {
-    display: inline-grid;
+    box-sizing: border-box;
+    width: 20%;
+    border: 5px;
+    text-align: center;
+    
 }
