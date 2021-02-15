@@ -4,14 +4,46 @@
 
 {% block body %}
 <!-- creates an overarching div, which I will use to design the layout using the css-->
+
+<div id = "Titles">
 <h1>Titles</h1>
+Search: <input type="text" id="search_form_input" ></input>
+</div>
 
-<h2> Tags</h2>
-{{category_names}}
+<div id="hello"></div>
+       
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-{{form.category.label}}{{form.category}}
+<script type=text/javascript>
+  $(document).ready(function(){
+    $("#search_form_input").keyup(function(){
+      var searchtext = $("#search_form_input").val();
+  
+      $.ajax({
+        type: "get",
+        data: {jsdata: searchtext},
+        success: function(response) {
+          $('#bro').html(jQuery(response).filter('#bro').html());
+        },
+        error: function(xhr) {
+          //Do Something to handle error
+        }
+      });
+    });
+  });
+  </script> 
+  
 
-  <div class = "flex-container">
+
+
+<form action = '/' method ='POST'>
+{{form.category.label}}
+{{form.category}}
+Sort by rating<input type="checkbox" value = "1" name = "sort_by_rating">
+
+{{form.submit}}
+</form>
+  <div id = "bro" class = "flex-container">
   {% for row in data %}
   <!-- for every book, creates a div which outputs the book's title, authors and a picture of it-->
   <div class = "ingrid-display">
@@ -20,10 +52,10 @@
     <img src = "{{row[2]}}">
     <!-- [0] is the position of the title and [1] corresponds to the author of each book. These 2 lines print both those 
     out onto the webpage for each book-->
-   <figcaption> {{row[0]}} {{row[1]}}</figcaption> 
+   <figcaption> {{row[1]}} {{row[0]}}</figcaption> 
   </div>
   {% endfor %}
   </div>
-
-  {
+  
+  
 {% endblock %}

@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_mysqldb import MySQL
 from sqlalchemy import create_engine
@@ -34,36 +34,53 @@ app.config['MYSQL_PASSWORD'] = 'kunsa3002'
 app.config['MYSQL_DB'] = 'library'
 
 mysql = MySQL(app)
-
-@app.route('/')
+@app.route('/browse', methods = ['GET','POST'])
+@app.route('/', methods = ['GET', 'POST'])
 def browse():
     # creates the connection object, which allows us to write SQL queries in the code
     book_tags_df = pd.read_csv('book_tags.csv')
     cur = mysql.connection.cursor()
-    cur.execute("SELECT tag_name FROM tags")
-    category_names = cur.fetchall()
-    exampletags = []
-    for i in range(0,10):
-      random_category = category_names[random.randint(0,len(category_names))]
-      exampletags.append(random_category)
-    dropdown = CategorySelect(taglist= category_names)
-    print(dir(dropdown))
-    
 
-     # SQL query to fetch the title, author and image url of every book in the books table
-    category = 'horror'
-    result = text("SELECT books.authors, books.title, books.image_url, tags.tag_id FROM ((books INNER JOIN book_tags ON books.goodreads_book_id = book_tags.goodreads_book_id) INNER JOIN tags ON book_tags.tag_id = tags.tag_id) WHERE tags.tag_name = :category ")
-    fetchdata = db.engine.execute(result, category=category).fetchall()
-    #cur.execute("SELECT books.title, books.authors, books.image_url, tags.tag_name FROM ((books INNER JOIN book_tags ON books.goodreads_book_id = book_tags.goodreads_book_id) INNER JOIN tags ON book_tags.tag_id = tags.tag_id) WHERE tags.tag_name = 'horror' " )
-    #cur.execute("SELECT title, authors, image_url FROM books")
-    # returns all of the data from the SQL query as a list of lists of each book's fetched columns
-    #fetchdata = cur.fetchall()
+    cur.execute("SELECT tag_name FROM tags ")
+    category_names = cur.fetchall()
+    # creates a form object of the category select form
+    category_select_form = CategorySelect(taglist= category_names)
+    # SQL query to fetch the title, author and image url of every book in the books table
+    selectall = "SELECT authors, title, image_url FROM books LIMIT 10"
+    allbooks = text(selectall)
+    fetchdata = db.engine.execute(allbooks).fetchall()
+
+    # if statement to make sure the data is entered and validated
+    if request.method == 'POST':
+      # pulls the information submitted from the form into a dictionary
+      data = request.form
+      # gets the category from the dictionary data
+      category = data['category']
+      r = 'sort_by_rating'
+      # executes an SQL statement to select book details based on category
+      result = text("SELECT books.authors, books.title, books.image_url, tags.tag_id FROM ((books INNER JOIN book_tags ON books.goodreads_book_id = book_tags.goodreads_book_id) INNER JOIN tags ON book_tags.tag_id = tags.tag_id) WHERE tags.tag_name = :category ")
+      if r in data:
+        print(r,'is in dictionary')
+        result = text("SELECT books.authors, books.title, books.image_url, tags.tag_id FROM ((books INNER JOIN book_tags ON books.goodreads_book_id = book_tags.goodreads_book_id) INNER JOIN tags ON book_tags.tag_id = tags.tag_id) WHERE tags.tag_name = :category ORDER BY average_rating DESC")
+      else:
+        print(r,'is not in dictionary')
+      fetchdata = db.engine.execute(result, category=category)
+    
+    
+    stufftobefiltered = request.args.get('jsdata')
+    if stufftobefiltered:
+      print(stufftobefiltered)
+      filtered_fetchdata = list(filter(lambda x: stufftobefiltered in x[1], fetchdata))
+      print(filtered_fetchdata)
+      fetchdata = filtered_fetchdata
+      return render_template('browse.html',data = fetchdata, form = category_select_form)
+
     # closes connection object
     cur.close()
     
 
     # passes fetchdata to the html page so the data can be outputed on the website
-    return render_template('browse.html', data = fetchdata, category_names = exampletags, form=dropdown)
+    return render_template('browse.html', data = fetchdata, form=category_select_form)
 
 
 

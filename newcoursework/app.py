@@ -226,7 +226,7 @@ def index():
 
         
 
-    return render_template('index.html', form = form    , variable = ratingbooks)   
+    return render_template('index.html', form = form  , variable = ratingbooks)   
 
 @app.route('/next')
 def next():

@@ -13,10 +13,15 @@ class recommender_inputs(BaseFormTemplate):
     
   
 class CategorySelect(FlaskForm):
+    # a select field which has a choices parameter
     category = SelectField(u'Pick a category', choices=[])
+    # a submit button to submit the form
+    submit = SubmitField('submit')
+    # an initialization function which will set the choices parameter to the list of categories
     def __init__(self, taglist=None):
-        super().__init__()  # calls the base initialisation and then...
+        super().__init__()  
         if taglist: 
+            # sets choices to all the categories in the list taglist
             self.category.choices = [(c[0],c[0]) for c in taglist]
 
 
@@ -27,3 +32,6 @@ class Signupform(FlaskForm):
 class PastebinEntry(FlaskForm):
     language = SelectField(u'Programming Language', choices=[('cpp', 'C++'), ('py', 'Python'), ('text', 'Plain Text')])
 
+simpleList = ('hello', 'some string', 'hello 2')
+searchTerm = 'so'
+print(list(filter(lambda x: searchTerm in x, simpleList)))  
