@@ -1,0 +1,30 @@
+{%extends 'base.html' %}
+{% block head%}
+{% endblock %}
+{% block body %}
+<table id="bookdetails">
+{% for key,value in result.items()%}
+<tr>
+    <th>
+        {{key}}
+    </th>
+    <td>
+        {{value}}
+    </td>
+</tr>
+{% endfor %}
+</table>
+<div id="content"></div>
+    <script>
+      function handleResponse(response) {
+      for (var i = 0; i < response.items.length; i++) {
+        var item = response.items[i];
+        // in production code, item.text should have the HTML entities escaped.
+        document.getElementById("content").innerHTML += "<br>" + item.volumeInfo.description;
+      }
+    }
+    </script>
+    <script src="https://www.googleapis.com/books/v1/volumes?q=intitle:harry+potter&callback=handleResponse"></script>
+  </body>
+
+{% endblock %}

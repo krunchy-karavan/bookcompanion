@@ -1,61 +1,60 @@
 {% extends 'base.html' %}
 <!-- statement that copies the base template created in base.html-->
+{% block head%}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
+
+
+
+{% endblock %}
 
 {% block body %}
 <!-- creates an overarching div, which I will use to design the layout using the css-->
 
-<div id = "Titles">
 <h1>Titles</h1>
-Search: <input type="text" id="search_form_input" ></input>
-</div>
 
-<div id="hello"></div>
-       
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+Search: <input type="text" id="search_form_input" name = "filterstring"></input>
 
-<script type=text/javascript>
-  $(document).ready(function(){
-    $("#search_form_input").keyup(function(){
-      var searchtext = $("#search_form_input").val();
+
+
   
-      $.ajax({
-        type: "get",
-        data: {jsdata: searchtext},
-        success: function(response) {
-          $('#bro').html(jQuery(response).filter('#bro').html());
-        },
-        error: function(xhr) {
-          //Do Something to handle error
-        }
-      });
-    });
-  });
-  </script> 
-  
-
-
-
-<form action = '/' method ='POST'>
+<form id= "catform" action="/" method="POST">
 {{form.category.label}}
 {{form.category}}
 Sort by rating<input type="checkbox" value = "1" name = "sort_by_rating">
 
 {{form.submit}}
 </form>
+
   <div id = "bro" class = "flex-container">
+  
   {% for row in data %}
   <!-- for every book, creates a div which outputs the book's title, authors and a picture of it-->
-  <div class = "ingrid-display">
+  <!-- anchor with link wrapped around the div-->
+  <div  id = "{{row[0]}}" class = "ingrid-display" >
+    <form action="{{url_for('books')}}" id = "{{row[1]}}"method = "POST">
+      <input type = hidden name= "passingdata" value={{row[3]}}> 
+    </form>
+    <script>
+// adds a function which will occur when the div is clicked
+      document.getElementById("{{row[0]}}").addEventListener("click", myfunction);
+//  function to submit the form which has the id =row[1], which will be executed on
+      function myfunction(){
+        document.getElementById("{{row[1]}}").submit();
+    
+      }
+    </script>
     <figure>
   <!-- [2] is the position of the image_url in the list for each book-->
     <img src = "{{row[2]}}">
     <!-- [0] is the position of the title and [1] corresponds to the author of each book. These 2 lines print both those 
     out onto the webpage for each book-->
    <figcaption> {{row[1]}} {{row[0]}}</figcaption> 
+   </figure>
   </div>
   {% endfor %}
   </div>
   
+ 
   
 {% endblock %}

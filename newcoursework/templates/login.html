@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+
+
+{% block body %}
+<h1>Login</h1>
+<div id = "loginform">
+<div>
+{{loginform.username.label}}
+{{loginform.username}}
+</div>
+<div>
+{{loginform.password.label}}
+{{loginform.password}}
+</div>
+{{loginform.submit}}
+
+</div>
+
+<form>
+  Don't have a login? Sign up  <input type="button" name="Sign up" value="signup">
+</form>
+{% endblock %}

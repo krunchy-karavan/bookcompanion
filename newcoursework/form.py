@@ -25,13 +25,12 @@ class CategorySelect(FlaskForm):
             self.category.choices = [(c[0],c[0]) for c in taglist]
 
 
-class Signupform(FlaskForm):
-    classic = StringField('Username')  
-    banter = PasswordField('Password')
+class Loginform(FlaskForm):
+    username = StringField('Username')  
+    password = PasswordField('Password')
+    submit = SubmitField('Submit')
 
 class PastebinEntry(FlaskForm):
     language = SelectField(u'Programming Language', choices=[('cpp', 'C++'), ('py', 'Python'), ('text', 'Plain Text')])
 
-simpleList = ('hello', 'some string', 'hello 2')
-searchTerm = 'so'
-print(list(filter(lambda x: searchTerm in x, simpleList)))  
+

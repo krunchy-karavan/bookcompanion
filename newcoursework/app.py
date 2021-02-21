@@ -16,7 +16,7 @@ from collections import defaultdict
 from time import time
 from flask_wtf import FlaskForm, Form
 from wtforms import StringField, PasswordField, SubmitField
-from form import recommender_inputs,Signupform, BaseFormTemplate
+from form import recommender_inputs,Loginform, BaseFormTemplate
 from flask import Flask
 from flask_mysqldb import MySQL
 
